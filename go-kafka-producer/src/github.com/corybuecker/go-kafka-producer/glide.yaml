@@ -1,0 +1,4 @@
+package: github.com/corybuecker/test-kafka
+import:
+- package: github.com/Shopify/sarama
+- package: github.com/urfave/cli
