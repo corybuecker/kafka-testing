@@ -25,9 +25,12 @@ func SendMessages(messages [][]byte, kafkaHost string, concurrency int) {
 	batchSize := len(messages)/concurrency + 1
 
 	for i := 0; i < len(messages); i += batchSize {
+
 		if i+batchSize > len(messages) {
+			log.Printf("sending %d messages", len(messages[i:]))
 			go sendBatch(messages[i:], kafkaHost, &wg)
 		} else {
+			log.Printf("sending %d messages", len(messages[i:i+batchSize]))
 			go sendBatch(messages[i:i+batchSize], kafkaHost, &wg)
 		}
 	}
