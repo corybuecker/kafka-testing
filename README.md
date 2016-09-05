@@ -21,4 +21,4 @@ The advertised listener and zookeeper IP should be the IP address of your Docker
 
     cd go-kafka-producer
     docker build -t go-kafka-producer .
-    docker run -ti --link kafka:kafka go-kafka-producer --kafka_host localhost:9093,localhost:9092 --number_of_messages 25000
+    docker run -ti --net host go-kafka-producer --kafka_host localhost:9093,localhost:9092 --number_of_messages 25000
