@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"log"
+	"strings"
 	"sync"
 	"time"
 
@@ -39,13 +40,12 @@ func SendMessages(messages [][]byte, kafkaHost string, concurrency int) {
 }
 
 func sendBatch(messages [][]byte, kafkaHost string, wg *sync.WaitGroup) {
-	producer, _ := sarama.NewSyncProducer([]string{kafkaHost}, sarama.NewConfig())
+	producer, _ := sarama.NewSyncProducer(strings.Split(kafkaHost, ","), sarama.NewConfig())
 
 	for _, message := range messages {
-		rawMessage := sarama.ByteEncoder(message)
 		producer.SendMessage(&sarama.ProducerMessage{
 			Topic: "kafka.test",
-			Value: rawMessage,
+			Value: sarama.ByteEncoder(message),
 		})
 	}
 

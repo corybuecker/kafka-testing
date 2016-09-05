@@ -4,18 +4,21 @@
 
 # Running Zookeeper with Volume Persistence
 
-    docker run -d -p 2181:2181 --name zookeeper --restart always -v zookeeper:/var/zookeeper zookeeper
+    docker run -d -p 2181:2181 --name zookeeper -v zookeeper:/var/zookeeper zookeeper
 
 # Building Kafka
 
     docker build -t kafka kafka
 
-# Running Kafka with Volume Persistence
+# Running Two Kafka Brokers with Volume Persistence
 
-    docker run -d -v kafka:/var/kafka -p 9092:9092 --link zookeeper:zookeeper --name kafka --restart always kafka --override zookeeper.connect=zookeeper:2181
+The advertised listener and zookeeper IP should be the IP address of your Docker host system.
+
+    docker run -d -v kafka-1:/var/kafka -p 9092:9092 --name kafka-1 kafka --override advertised.listeners=PLAINTEXT://192.168.0.9:9092 --override zookeeper.connect=192.168.0.9:2181
+    docker run -d -v kafka-2:/var/kafka -p 9093:9092 --name kafka-2 kafka --override advertised.listeners=PLAINTEXT://192.168.0.9:9093 --override zookeeper.connect=192.168.0.9:2181
 
 # Running the Go-based producer
 
     cd go-kafka-producer
     docker build -t go-kafka-producer .
-    docker run -ti --link kafka:kafka go-kafka-producer --kafka_host kafka:9092 --number_of_messages 25000
+    docker run -ti --link kafka:kafka go-kafka-producer --kafka_host localhost:9093,localhost:9092 --number_of_messages 25000
